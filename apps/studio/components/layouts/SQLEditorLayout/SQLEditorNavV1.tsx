@@ -32,18 +32,23 @@ interface SQLEditorNavV1Props {
 }
 
 export const SQLEditorNavV1 = ({
-  searchText,
+  searchText: _searchText,
   selectedQueries,
   handleNewQuery,
   setSearchText,
   setSelectedQueries,
   setShowDeleteModal,
 }: SQLEditorNavV1Props) => {
+  const searchText = _searchText.trim()
   const router = useRouter()
   const { ref, id: activeId } = useParams()
   const enableFolders = useFlag('sqlFolderOrganization')
 
   const snippets = useSnippets(ref)
+  const sqlSnippets = useMemo(() => {
+    return snippets.filter((snippet) => snippet.type === 'sql')
+  }, [snippets])
+
   const snap = useSqlEditorStateSnapshot()
 
   const { isLoading, isSuccess, isError, error } = useSqlSnippetsQuery(ref, {
@@ -115,7 +120,8 @@ export const SQLEditorNavV1 = ({
   }
 
   const projectSnippets = useMemo(() => {
-    return snippets.filter((snippet) => snippet.visibility === 'project')
+    const sqlSnippets = snippets.filter((snippet) => snippet.visibility === 'project')
+    return sqlSnippets.filter((snippet) => snippet.type === 'sql')
   }, [snippets])
 
   const filteredProjectSnippets = useMemo(() => {
@@ -128,19 +134,25 @@ export const SQLEditorNavV1 = ({
   }, [projectSnippets, searchText])
 
   const personalSnippets = useMemo(() => {
-    const ss = snippets.filter(
-      (snippet) => snippet.visibility === 'user' && !snippet.content.favorite
+    const ss = sqlSnippets.filter(
+      (snippet) =>
+        snippet.visibility === 'user' && !snippet.content.favorite && snippet.type === 'sql'
     )
 
     if (searchText.length > 0) {
-      return ss.filter((tab) => tab.name.toLowerCase().includes(searchText.toLowerCase()))
+      return sqlSnippets.filter((tab) => tab.name.toLowerCase().includes(searchText.toLowerCase()))
     }
     return ss
-  }, [searchText, snippets])
+  }, [searchText, sqlSnippets])
 
   const favoriteSnippets = useMemo(() => {
-    return snippets.filter((snippet) => snippet.content.favorite)
-  }, [snippets])
+    return sqlSnippets.filter((snippet) => {
+      if (snippet.type === 'sql') {
+        return snippet.content.favorite
+      }
+      return false
+    })
+  }, [sqlSnippets])
 
   const filteredFavoriteSnippets = useMemo(() => {
     if (searchText.length > 0) {
@@ -168,14 +180,15 @@ export const SQLEditorNavV1 = ({
               <InnerSideBarFilterSearchInput
                 name="search-queries"
                 placeholder="Search queries..."
-                onChange={(e) => setSearchText(e.target.value.trim())}
-                value={searchText}
+                onChange={(e) => setSearchText(e.target.value)}
+                value={_searchText}
                 aria-labelledby="Search queries"
               />
             </InnerSideBarFilters>
           )}
 
           {searchText.length > 0 &&
+            personalSnippets.length === 0 &&
             filteredProjectSnippets.length === 0 &&
             filteredFavoriteSnippets.length === 0 &&
             filteredProjectSnippets.length === 0 && (

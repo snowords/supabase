@@ -2,6 +2,13 @@ import Link from 'next/link'
 import React, { ReactNode, useState } from 'react'
 
 import * as Tooltip from '@radix-ui/react-tooltip'
+import { IS_PLATFORM } from 'common'
+import Table from 'components/to-be-cleaned/Table'
+import { useIsFeatureEnabled } from 'hooks/misc/useIsFeatureEnabled'
+import { useFlag } from 'hooks/ui/useFlag'
+import { copyToClipboard } from 'lib/helpers'
+import { BookOpen, Check, ChevronDown, Clipboard, ExternalLink, X } from 'lucide-react'
+import { logConstants } from 'shared-data'
 import {
   Alert,
   Badge,
@@ -10,30 +17,18 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-  IconCheck,
-  IconChevronDown,
-  IconClipboard,
-  IconExternalLink,
-  IconX,
   Popover,
   SidePanel,
   Tabs,
 } from 'ui'
-import DatePickers from './Logs.DatePickers'
-import Table from 'components/to-be-cleaned/Table'
-import { logConstants } from 'shared-data'
-import { copyToClipboard } from 'lib/helpers'
-import { BookOpen, ChevronDown } from 'lucide-react'
-import { WarehouseQueryTemplate } from './Warehouse.utils'
 import {
   EXPLORER_DATEPICKER_HELPERS,
   LOGS_SOURCE_DESCRIPTION,
   LogsTableName,
 } from './Logs.constants'
+import DatePickers from './Logs.DatePickers'
 import { LogTemplate, LogsWarning, WarehouseCollection } from './Logs.types'
-import { useIsFeatureEnabled } from 'hooks/misc/useIsFeatureEnabled'
-import { useFlag } from 'hooks/ui/useFlag'
-import { IS_PLATFORM } from 'common'
+import { WarehouseQueryTemplate } from './Warehouse.utils'
 
 export type SourceType = 'logs' | 'warehouse'
 export interface LogsQueryPanelProps {
@@ -255,7 +250,7 @@ const LogsQueryPanel = ({
                         type="text"
                         className="px-1"
                         onClick={() => setShowReference(false)}
-                        icon={<IconX size={18} strokeWidth={1.5} />}
+                        icon={<X size={18} strokeWidth={1.5} />}
                       />
                     </div>
                   }
@@ -288,8 +283,8 @@ const LogsQueryPanel = ({
                           className="text-brand"
                         >
                           unnesting joins
-                          <IconExternalLink
-                            size="tiny"
+                          <ExternalLink
+                            size="14"
                             className="ml-1 inline -translate-y-[2px]"
                             strokeWidth={1.5}
                           />
@@ -365,7 +360,7 @@ const Field = ({
         {isCopied ? (
           <Tooltip.Root delayDuration={0}>
             <Tooltip.Trigger>
-              <IconCheck size={14} strokeWidth={3} className="text-brand" />
+              <Check size={14} strokeWidth={3} className="text-brand" />
             </Tooltip.Trigger>
             <Tooltip.Portal>
               <Tooltip.Content side="bottom">
@@ -384,7 +379,7 @@ const Field = ({
         ) : (
           <Tooltip.Root delayDuration={0}>
             <Tooltip.Trigger>
-              <IconClipboard size="tiny" strokeWidth={1.5} />
+              <Clipboard size={14} strokeWidth={1.5} />
             </Tooltip.Trigger>
             <Tooltip.Portal>
               <Tooltip.Content side="bottom">

@@ -2,7 +2,7 @@ import { PermissionAction } from '@supabase/shared-types/out/constants'
 import { FilePlus, FolderPlus, Plus } from 'lucide-react'
 import { useRouter } from 'next/router'
 import { useState } from 'react'
-import toast from 'react-hot-toast'
+import { toast } from 'sonner'
 
 import { useParams } from 'common'
 import { untitledSnippetTitle } from 'components/interfaces/SQLEditor/SQLEditor.constants'
@@ -37,7 +37,11 @@ import {
 import { SQLEditorNavV1 } from './SQLEditorNavV1'
 import { SQLEditorNav as SQLEditorNavV2 } from './SQLEditorNavV2/SQLEditorNav'
 
-export const SQLEditorMenu = ({ onViewOngoingQueries }: { onViewOngoingQueries: () => void }) => {
+interface SQLEditorMenuProps {
+  onViewOngoingQueries: () => void
+}
+
+export const SQLEditorMenu = ({ onViewOngoingQueries }: SQLEditorMenuProps) => {
   const router = useRouter()
   const { profile } = useProfile()
   const project = useSelectedProject()
@@ -142,7 +146,7 @@ export const SQLEditorMenu = ({ onViewOngoingQueries }: { onViewOngoingQueries: 
                     placeholder="Search queries..."
                     aria-labelledby="Search queries"
                     value={searchText}
-                    onChange={(e) => setSearchText(e.target.value.trim())}
+                    onChange={(e) => setSearchText(e.target.value)}
                   >
                     <InnerSideBarFilterSortDropdown
                       value={snapV2.order}
